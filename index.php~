@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+    <body>
+        <head>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css" rel="stylesheet"/>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+            <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <title>BerryBox</title>
+            <link rel="shortcut icon" href="berrybox2.ico"/>
+        </head>
+    <main>
+        
+        <?php
+        @session_start();
+
+        $user = $_POST['username'];
+        $ip = $_POST['ip']; 
+        $port =$_POST['port']; 
+        $pass = $_POST['pass'];
+        
+        $conn=ssh2_connect($ip, $port);
+        ssh2_auth_password($conn, $user, $pass);
+
+        $sftp=ssh2_sftp($conn);
+        ?>
+        
+        <nav class="light-green darken-3">
+            <div class="navbar-wrapper container">
+                <a href="index.html" class="brand-logo center"><img src="berrybox2.png" width="50" style="padding-top:5px">BerryBox</a>
+                
+                <ul class="right">
+                    <li><?php echo $user; ?></li>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Log out</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col s3">
+                    <div class="card-panel">
+                        
+
+
+
+                    </div>
+                </div>
+                <div class="col s9">
+                    <div class="card-panel">
+                        <?php
+                        $currentdir='ssh2.sftp://'.$sftp;
+                        $handle=opendir($currentdir);
+                        while (false!=($file=readdir($handle))){
+                            if(is_dir($file)){
+                                $currentdir=$currentdir.'/'.$file;
+                                ?><a href="<?php echo $currentdir; ?> "> <?php echo $file; ?> </a> <?php
+                            }
+                            else{
+                                echo $file;
+                            }
+                            ?> <hr><?php
+                        }
+
+
+                        ?> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        </main>
+        
+        <footer class="page-footer red accent-4">
+            <div class="footer-copyright">
+                BerryBox 2016 - Christial Solecki | David Bussom | Briana Stroman | Paul Ruppenthal
+            </div>
+        </footer>
+    </body>
+</html>
